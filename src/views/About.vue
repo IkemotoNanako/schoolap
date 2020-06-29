@@ -45,10 +45,10 @@ export default {
 
 @media screen and (max-width: 768px){
   .first-p{
-      font-size: 30px;
+      font-size: 20px;
   }
   .second-p{
-      font-size: 30px;
+      font-size: 20px;
   }
 
 
