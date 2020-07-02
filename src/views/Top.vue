@@ -43,16 +43,7 @@ export default {
 
 <style scoped>
 
-@media screen and (max-width: 768px){
-  .first-p{
-      font-size: 30px;
-  }
-  .second-p{
-      font-size: 30px;
-  }
 
-
-}
 header {
     position: relative;
 }
@@ -107,5 +98,22 @@ button {
 
 .fil3 {
   fill: #AEAFB0;
+}
+
+
+
+@media screen and (max-width: 768px){
+  .first-p{
+      font-size: 35px;
+      margin: 0px 0px 0px 0px;
+  }
+  .second-p{
+      font-size: 35px;
+      margin: 0px 0px 0px 0px;
+  }
+  button {
+    font-size: 30px;
+    top: -70px;
+}
 }
 </style>

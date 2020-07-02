@@ -1,5 +1,8 @@
 <template>
 <div>
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
     <header>
         <h1>うちで学校！！</h1>
         <nav>
@@ -25,10 +28,11 @@
     </transition>
     <h2>時間割</h2>
     <ol class="subject">
-        <li v-for="(subject, index) in subjects" :key="index">{{subject}}</li>
+        <li v-for="(subject) in subjects" :key="subject">{{subject}}</li>
     </ol>
     <input type="text" v-model="newSubject">
     <input type="submit" value="決定" @click="addSubject">
+    <input type="submit" value="削除" @click="lossSubject">
 </div>
      
 </template>
@@ -48,6 +52,9 @@ methods: {
         this.subjects.push(this.newSubject);
         this.newSubject = '';
     },
+    lossSubject() {
+        this.subjects.splice(this.newSubject);
+    },
       naviOpen: function() {
       this.active = !this.active;
       this.navi = !this.navi;
@@ -56,8 +63,49 @@ methods: {
     };
 </script>
 <style scoped>
-.subject {
-    color: #333
+/*背景*/
+
+.bg {
+  animation:slide 3s ease-in-out infinite alternate;
+  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
+  bottom:0;
+  left:-50%;
+  opacity:.5;
+  position:fixed;
+  right:-50%;
+  top:0;
+  z-index:-1;
+}
+
+.bg2 {
+  animation-direction:alternate-reverse;
+  animation-duration:4s;
+}
+
+.bg3 {
+  animation-duration:5s;
+}
+
+.content {
+  background-color:rgba(255,255,255,.8);
+  border-radius:.25em;
+  box-shadow:0 0 .25em rgba(0,0,0,.25);
+  box-sizing:border-box;
+  left:50%;
+  padding:10vmin;
+  position:fixed;
+  text-align:center;
+  top:50%;
+  transform:translate(-50%, -50%);
+}
+
+@keyframes slide {
+  0% {
+    transform:translateX(-25%);
+  }
+  100% {
+    transform:translateX(25%);
+  }
 }
 /*header*/
 header {
@@ -65,7 +113,6 @@ header {
     box-sizing: border-box;
     padding: 0px 50px;
     display: flex;
-    background: #333333;
 }
 .inner-nav {
     display: flex;
@@ -80,7 +127,7 @@ h1 {
     font-size: 50px;
     font-weight: bold;
     padding: 20px;
-    font-style: italic;
+    text-shadow: 2px 2px 3px #333;
 }
 .menu {
     padding: 0 20px;
@@ -90,6 +137,17 @@ a {
     text-decoration: none;
     color:#fff;
     padding-left: 200px;
+}
+/*時間割*/
+h2 {
+    color: #fff;
+    font-size: 50px;
+    padding: 20px;
+    text-shadow: 2px 2px 3px #333; 
+}
+.subject {
+    color: #fff;
+    text-shadow: 2px 2px 3px #333;
 }
 
 /*ハンバーガーメニュー*/
@@ -177,6 +235,17 @@ a {
         top: 30px;
     }
 
+}
+/*レスポンシブ対応*/
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 20px;
+        padding: 20px 0;
+        margin: 0px;
+    }
+    h2 {
+        font-size: 17px;
+    }
 }
 
 </style>
