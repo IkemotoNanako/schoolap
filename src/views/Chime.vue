@@ -1,261 +1,134 @@
 <template>
 <div>
-  
-  <div id='timerText'>0:00:00</div>
-    <form name="alarm_form">
-        <p>アラーム: <select name ='option_hours'>
-            <option value='0'>00</option>
-            <option value='1'>01</option>
-            <option value='2'>02</option>
-            <option value='3'>03</option>
-            <option value='4'>04</option>
-            <option value='5'>05</option>
-            <option value='6'>06</option>
-            <option value='7'>07</option>
-            <option value='8'>08</option>
-            <option value='9'>09</option>
-            <option value='10'>10</option>
-            <option value='11'>11</option>
-            <option value='12'>12</option>
-            <option value='13'>13</option>
-            <option value='14'>14</option>
-            <option value='15'>15</option>
-            <option value='16'>16</option>
-            <option value='17'>17</option>
-            <option value='18'>18</option>
-            <option value='19'>19</option>
-            <option value='20'>20</option>
-            <option value='21'>21</option>
-            <option value='22'>22</option>
-            <option value='23'>23</option>
-        </select>
-        <select name ='option_minutes'>
-            <option value='0'>00</option>
-            <option value='1'>01</option>
-            <option value='2'>02</option>
-            <option value='3'>03</option>
-            <option value='4'>04</option>
-            <option value='5'>05</option>
-            <option value='6'>06</option>
-            <option value='7'>07</option>
-            <option value='8'>08</option>
-            <option value='9'>09</option>
-            <option value='10'>10</option>
-            <option value='11'>11</option>
-            <option value='12'>12</option>
-            <option value='13'>13</option>
-            <option value='14'>14</option>
-            <option value='15'>15</option>
-            <option value='16'>16</option>
-            <option value='17'>17</option>
-            <option value='18'>18</option>
-            <option value='19'>19</option>
-            <option value='20'>20</option>
-            <option value='21'>21</option>
-            <option value='22'>22</option>
-            <option value='23'>23</option>
-            <option value='24'>24</option>
-            <option value='25'>25</option>
-            <option value='26'>26</option>
-            <option value='27'>27</option>
-            <option value='28'>28</option>
-            <option value='29'>29</option>
-            <option value='30'>30</option>
-            <option value='31'>31</option>
-            <option value='32'>32</option>
-            <option value='33'>33</option>
-            <option value='34'>34</option>
-            <option value='35'>35</option>
-            <option value='36'>36</option>
-            <option value='37'>37</option>
-            <option value='38'>38</option>
-            <option value='39'>39</option>
-            <option value='40'>40</option>
-            <option value='41'>41</option>
-            <option value='42'>42</option>
-            <option value='43'>43</option>
-            <option value='44'>44</option>
-            <option value='45'>45</option>
-            <option value='46'>46</option>
-            <option value='47'>47</option>
-            <option value='48'>48</option>
-            <option value='49'>49</option>
-            <option value='50'>50</option>
-            <option value='51'>51</option>
-            <option value='52'>52</option>
-            <option value='53'>53</option>
-            <option value='54'>54</option>
-            <option value='55'>55</option>
-            <option value='56'>56</option>
-            <option value='57'>57</option>
-            <option value='58'>58</option>
-            <option value='59'>59</option>
-        </select> <span class="btn" id="set_btn">設定</span></p></form>
-
-        <div class="container">
-            <p>アラーム設定時刻</p>
-            <ul id="parent_list">
-            </ul>
+  <div class="bg"></div>
+  <div class="bg bg2"></div>
+  <div class="bg bg3"></div>
+      <div id="timer">
+        <div class="timer">
+          <div class="time">
+             {{ formatTime }}
+          </div>
+          <button v-on:click="start" v-if="!timerOn">Start</button>
+          <button v-on:click="stop" v-if="timerOn">Stop</button>
         </div>
-      
-    
+     </div>
+      <audio src="../assets/Japanese_School_Bell02-01.mp3" autoplay controls v-if="chime"></audio>
 </div>
+
+  
 </template>
 
 <script>
-'use strict';
-            let currentDate = new Date();
-            let hours = currentDate.getHours();
-            let minutes = currentDate.getMinutes();
-            let seconds = currentDate.getSeconds();
-            let timerText = document.getElementById('timerText');
-            let set_btn = document.getElementById('set_btn');
-            let delete_btn = document.getElementById('delete_btn');
-            let option_hours;
-            let option_minutes;
-            let parent_list = document.getElementById('parent_list');
-            let record = []; //アラーム設定格納
-            let x = 0; // 計算用の変数
+export default {
+  name: 'timer',
+  data() {
+    return {
+      min: 10,
+      sec: 0,
+      timerOn: false,
+      timerObj: null,
+      chime: false,
+    }
+  },
+  methods: {
+    count() {
+      this.number = 0;
+      if (this.sec <= 0 && this.min >= 1 && this.number % 2 == 1) {
+        this.min --;
+        this.sec = 59;
+      } else if (this.sec<=0 && this.min<=0 && this.number % 2 == 1) {
+        this.chime = true
+        this.number++;
+        console.log(this.number);
+        this.min = 60;
+        this.sec = 0;
+      } else {
+        this.sec --;
+      }
+      if (this.sec <= 0 && this.min >= 1 && this.number % 2 == 0) {
+        this.min --;
+        this.sec = 59;
+      } else if (this.sec<=0 && this.min<=0 && this.number % 2 == 0) {
+        this.chime = true
+        console.log(this.number);
+        this.number++;
+        this.min = 10;
+        this.sec = 0;
+      } else {
+        this.sec --;
+      }
+      
+    },
 
-            //アラーム設定用オブジェクト
-            let Setting = function(sethour, setminute){
-                this.sethour = sethour;
-                this.setminute = setminute;
-            };
+    start: function() {
+      let self = this;
+      this.timerObj = setInterval(function() {self.count()}, 100)
+      this.timerOn = true; //timerがOFFであることを状態として保持
+    },
 
-            // 時計の"12:1"を"12:01"と表記
-            function adjustDigit (num){
-                let digit;
-                if( num < 10 ) {digit = `0${num}`;}
-                else { digit = num; }
-                return digit;
-            }
-
-            // アラームセット
-            set_btn.addEventListener('click', function(){
-                //アラームは最大5まで
-                let lis = parent_list.getElementsByTagName('li');
-                let len = lis.length;
-                if (len >= 5) {return;}
-
-                //設定時間を記録
-                option_hours = document.alarm_form.option_hours.value;
-                option_minutes = document.alarm_form.option_minutes.value;
-                record[x] = new Setting(option_hours, option_minutes);
-
-                 //設定時間を表示
-                 let container_list = document.createElement('li');
-                 let list_content = document.createTextNode(`${record[x].sethour}時${record[x].setminute}分`);
-                 parent_list.appendChild(container_list);
-                 container_list.appendChild(list_content);
-
-                //表示削除用ボタン
-                let list_span = document.createElement('span');
-                let id_li = document.createAttribute('id'); 
-                let id_span = document.createAttribute('id'); 
-                let span_content = document.createTextNode('削除');
-                container_list.appendChild(list_span);
-                list_span.appendChild(span_content);
-                container_list.setAttributeNode(id_li);
-                container_list.id = x;
-                container_list.classList.add('deletes');
-                list_span.classList.add('delete_btn');
-
-                //設定時刻と表示を削除
-                let deletes = document.getElementsByClassName('deletes');
-                for( var i = 0, de_len = deletes.length; i < de_len; i++) {
-                    deletes[i].onclick = function () {
-                        record[this.id] = 'disabled';
-                        this.id = 'temp';
-                        var temp = document.getElementById('temp');
-                        temp.parentNode.removeChild(temp);
-                    };
-                }
-                x++;
-            });
-
-            //時計を動かす
-            function updateCurrentTime(){
-                setTimeout(function(){
-                    currentDate = new Date();
-                    hours = adjustDigit(currentDate.getHours());
-                    minutes = adjustDigit(currentDate.getMinutes());
-                    seconds = adjustDigit(currentDate.getSeconds());
-                    timerText.innerHTML = `${hours}:${minutes}:${seconds}`;
-
-                    //アラーム機能
-                    for (var i = 0, len = record.length; i < len; i++){
-                        if (record[i].sethour == currentDate.getHours() && record[i].setminute == currentDate.getMinutes() && seconds == 0){
-                            alert('The time is now!');
-                        }
-                    }
-                    updateCurrentTime();
-                }, 1000);
-            }updateCurrentTime();
-
+    stop: function() {
+      clearInterval(this.timerObj);
+      this.timerOn = false; //timerがOFFであることを状態として保持
+    },
+  },
+  computed: {
+    formatTime: function() {
+      let timeStrings = [
+        this.min.toString(),
+        this.sec.toString()
+      ].map(function(str) {
+        if (str.length < 2) {
+          return "0" + str
+        } else {
+          return str
+        }
+      })
+      return timeStrings[0] + ":" + timeStrings[1]
+    }
+  }
+}
 </script>
 
 <style scoped>
-body {
-            font-family: Arial, 'メイリオ', sans-serif;
-            text-align: center;
-        }
-        #timerText {
-            color: #00aaff;
-            font-size: 148px;
-            margin: 30px auto;
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-        }
+#timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.time {
+  font-size: 80px;
+}
 
-        p {
-            font-size: 20px;
-        }
 
-        select {
-            font-size: 18px;
-            padding: 3px;
-        }
 
-        .btn{
-            margin-left: 5px;
-            display: inline-block;
-            font-weight: bold;
-            width: 60px;
-            padding: 0.5px;
-            border-radius: 5px;
-            box-shadow: 0 2px 0 #CDC9C9;
-            background: #EEE9E9;
-            cursor: pointer;
-        }
+.bg {
+  animation:slide 3s ease-in-out infinite alternate;
+  background-image: linear-gradient(60deg, rgb(235, 231, 34) 50%, #09f 50%);
+  bottom:0;
+  left:-50%;
+  opacity:.5;
+  position:fixed;
+  right:-50%;
+  top:0;
+  z-index:-1;
+}
 
-        .delete_btn {
-            margin-left: 15px;
-            font-weight: bold;
-            width: 60px;
-            padding: 3px;
-            border-radius: 5px;
-            background: #FF4500;
-            box-shadow: 0 2px 0 red;
-            cursor: pointer;
-            color: #fff;
-        }
+.bg2 {
+  animation-direction:alternate-reverse;
+  animation-duration:4s;
+}
 
-        .container {
-            text-align: left;
-            padding: 15px;
-            margin: 0 auto;
-            background: #e0e0e0;
-            width: 350px;
-            height: 190px;
-        }
-        .container p {
-            font-size: 16px;
-            margin: 5px;
+.bg3 {
+  animation-duration:5s;
+}
 
-        }
-
-        .container li{
-            margin-bottom: 7px; 
-        }
+@keyframes slide {
+  0% {
+    transform:translateX(-25%);
+  }
+  100% {
+    transform:translateX(25%);
+  }
+}
 
 </style>
