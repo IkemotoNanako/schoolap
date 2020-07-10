@@ -3,16 +3,22 @@
   <div class="bg"></div>
   <div class="bg bg2"></div>
   <div class="bg bg3"></div>
-      <div id="timer">
-        <div class="timer">
-          <div class="time">
-             {{ formatTime }}
-          </div>
-          <button v-on:click="start" v-if="!timerOn">Start</button>
-          <button v-on:click="stop" v-if="timerOn">Stop</button>
+    <div>
+      <p>勉強時間</p>
+      <p><input type="number" placeholder="勉強時間" v-model="study">分</p>
+      <p>休憩時間</p>
+      <p><input type="number" placeholder="休憩時間" v-model="rest">分</p>
+    </div>
+    <div id="timer">
+      <div class="timer">
+        <div class="time">
+            {{ formatTime }}
         </div>
-     </div>
-      <audio src="../assets/Japanese_School_Bell02-01.mp3" autoplay controls v-if="chime"></audio>
+        <button v-on:click="start" v-if="!timerOn">Start</button>
+        <button v-on:click="stop" v-if="timerOn">Stop</button>
+      </div>
+    </div>
+    <audio src="../assets/Japanese_School_Bell02-01.mp3" autoplay controls v-if="chime"></audio>
 </div>
 
   
@@ -23,46 +29,45 @@ export default {
   name: 'timer',
   data() {
     return {
-      min: 10,
+      study: '',
+      rest: '',
+      min: 0,
       sec: 0,
       timerOn: false,
       timerObj: null,
       chime: false,
+      number:0,
+      
     }
   },
   methods: {
     count() {
-      this.number = 0;
-      if (this.sec <= 0 && this.min >= 1 && this.number % 2 == 1) {
+      if (this.sec <= 0 && this.min >= 1) {
         this.min --;
         this.sec = 59;
-      } else if (this.sec<=0 && this.min<=0 && this.number % 2 == 1) {
+      } else if (this.sec <= 0 && this.min <= 0 && this.number % 2 == 0) {
         this.chime = true
         this.number++;
-        console.log(this.number);
-        this.min = 60;
+        this.min = this.study;
         this.sec = 0;
+      } else if (this.sec <= 0 && this.min <= 0 && this.number % 2 == 1) {
+        this.chime = true;
+        this.number++;
+        this.min = this.rest;
+        this.sec = 0;
+      } else if (this.min == 0 && this.sec == 1){
+        this.chime = false;
+        this.sec --;
       } else {
         this.sec --;
       }
-      if (this.sec <= 0 && this.min >= 1 && this.number % 2 == 0) {
-        this.min --;
-        this.sec = 59;
-      } else if (this.sec<=0 && this.min<=0 && this.number % 2 == 0) {
-        this.chime = true
-        console.log(this.number);
-        this.number++;
-        this.min = 10;
-        this.sec = 0;
-      } else {
-        this.sec --;
-      }
+      
       
     },
 
     start: function() {
       let self = this;
-      this.timerObj = setInterval(function() {self.count()}, 100)
+      this.timerObj = setInterval(function() {self.count()}, 50)
       this.timerOn = true; //timerがOFFであることを状態として保持
     },
 
