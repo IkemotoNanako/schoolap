@@ -5,34 +5,30 @@
     <div class="bg bg3"></div>
     <header>
         <h1>うちで学校！！</h1>
-        <nav>
-            <ul class="inner-nav">
-                <li class="menu"><a href="#1">コンセプト</a></li>
-                <li class="menu"><a href="#2">使い方</a></li> 
-            </ul>
-        </nav>
     </header>
-    <div id="hamburger" @click="naviOpen" :class="{'is-active': active}">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    <transition name="navi">
-        <nav class="menu-content" v-show="navi"> 
-        <p class="menu-title">Sloth</p>
-          <ul class="menu-content_inner">
-            <li><a href="#1">コンセプト</a></li>
-            <li><a href="#2">使い方</a></li>
-          </ul>
-        </nav>
-    </transition>
     <h2>時間割</h2>
     <ol class="subject">
         <li v-for="(subject) in subjects" :key="subject">{{subject}}</li>
     </ol>
     <input type="text" v-model="newSubject">
     <input type="submit" value="決定" @click="addSubject">
-    <input type="submit" value="削除" @click="lossSubject">
+    <input type="submit" value="削除" @click="delateSubject">
+    <div>
+      <p>勉強時間</p>
+      <p><input type="number" placeholder="勉強時間" v-model="study">分</p>
+      <p>休憩時間</p>
+      <p><input type="number" placeholder="休憩時間" v-model="rest">分</p>
+    </div>
+    <div id="timer">
+      <div class="timer">
+        <div class="time">
+            {{ formatTime }}
+        </div>
+        <button v-on:click="start" v-if="!timerOn">Start</button>
+        <button v-on:click="stop" v-if="timerOn">Stop</button>
+      </div>
+    </div>
+    <audio src="../assets/Japanese_School_Bell02-01.mp3" autoplay controls v-if="chime"></audio>
 </div>
      
 </template>
@@ -41,26 +37,79 @@
 export default {
   data(){
     return{
-        active: false,
-        navi: false,
         newSubject:'',
+        study: '',//記入された勉強時間
+        rest: '',//記入された休憩時間
+        min: 0,//初期の分
+        sec: 0,//初期の秒
+        timerOn: false,
+        timerObj: null,
+        chime: false,//trueの時チャイム音を鳴らすものをfalseにしておく
+        number:0,//勉強時間と休憩時間の切り替えのための変数
         subjects:[]
     }
 },
 methods: {
+  //時間割を足す記述
     addSubject() {
         this.subjects.push(this.newSubject);
         this.newSubject = '';
     },
-    lossSubject() {
+  //時間割を消す記述 
+    delateSubject() {
         this.subjects.splice(this.newSubject);
     },
-      naviOpen: function() {
-      this.active = !this.active;
-      this.navi = !this.navi;
+  //タイマーを動かす記述
+    count() {
+      if (this.sec <= 0 && this.min >= 1) {
+        this.min --;
+        this.sec = 59;
+      } else if (this.sec <= 0 && this.min <= 0 && this.number % 2 == 0)//numberが偶数の時
+      {
+        this.chime = true//チャイムを鳴らす//
+        this.number++;//勉強時間と休憩時間の切り替えのための変数numberを＋１する
+        this.min = this.study;//記入された勉強時間を代入
+        this.sec = 0;
+      } else if (this.sec <= 0 && this.min <= 0 && this.number % 2 == 1)//numberが奇数の時
+      {
+        this.chime = true;//チャイムを鳴らす//
+        this.number++;//勉強時間と休憩時間の切り替えのための変数numberを＋１する
+        this.min = this.rest;//記入された休憩時間を代入
+        this.sec = 0;
+      } else if (this.min == 0 && this.sec == 1){
+        this.chime = false;
+        this.sec --;
+      } else {
+        this.sec --;
+      }
     },
+    start: function() {
+      let self = this;
+      this.timerObj = setInterval(function() {self.count()}, 1000)
+      this.timerOn = true; //timerがOFFであることを状態として保持
+    },
+
+    stop: function() {
+      clearInterval(this.timerObj);
+      this.timerOn = false; //timerがOFFであることを状態として保持
+    },
+  },
+  computed: {
+    formatTime: function() {
+      let timeStrings = [
+        this.min.toString(),
+        this.sec.toString()
+      ].map(function(str) {
+        if (str.length < 2) {
+          return "0" + str
+        } else {
+          return str
+        }
+      })
+      return timeStrings[0] + ":" + timeStrings[1]
     }
-    };
+  }
+}
 </script>
 <style scoped>
 /*背景*/
@@ -103,14 +152,6 @@ header {
     padding: 0px 50px;
     display: flex;
 }
-.inner-nav {
-    display: flex;
-    justify-content: center;
-    line-height: 60px;
-    list-style: none;
-    padding-left: 60px;
-    padding-top: 15px;
-}
 h1 {
     color: #fff;
     font-size: 50px;
@@ -138,93 +179,16 @@ h2 {
     color: #fff;
     text-shadow: 2px 2px 3px #333;
 }
-
-/*ハンバーガーメニュー*/
-
-
-#hamburger.is-active span:nth-of-type(1) {
-    top: 20px;
-    transform: rotate(45deg);
+/*タイマー*/
+#timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#hamburger.is-active span:nth-of-type(2) {
-    opacity: 0;
-}
-#hamburger.is-active span:nth-of-type(3) {
-    top: 20px;
-    transform: rotate(-45deg);
-}
-@media screen and (max-width: 768px) {
-    .menu {
-        display: none;
-    }
-    .menu-content {
-        display: block;
-    }
-    .menu-content .menu-title {
-        margin: 40px 20px;
-        font-size: 2.2rem;
-        color: #fff;
-        text-align: left;
-        font-weight: bold;
-        font-style: initial;
-    }
-}
-.menu-content {
-    width: calc(100% - 80px);
-    height: 100%;
-    text-align: center;
-    transition: .2s;
-    position: fixed;
-    top: 0;
-    background: #fff;
-    color: #333333;
-    box-shadow: 80px 0 rgba(81, 82, 82, 0.3);
-    z-index: 10;
-}
-.menu-content li a{
-    color: #333333;
-    margin: 15px;
-    padding: 5px;
-    border-bottom: 0.5px solid #333;
-    display: block;
-}
-.memu-content li {
-    width: 100%;
-    text-align: left;
+.time {
+  font-size: 80px;
 }
 
-@media screen and (max-width: 768px) {
-    #hamburger {
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        cursor: pointer;
-        z-index: 100;
-        right: 20px;
-        transition: .4s;
-        top: 20px;
-        position: fixed;
-    }
-    #hamburger span {
-        background-color: #fff;
-        position: absolute;
-        left: 2px;
-        display: block;
-        width: 35px;
-        height: 2px;
-        transition: .8s;
-    }
-    #hamburger span:nth-of-type(1) {
-        top: 10px;
-    }
-    #hamburger span:nth-of-type(2) {
-        top: 20px;
-    }
-    #hamburger span:nth-of-type(3) {
-        top: 30px;
-    }
-
-}
 /*レスポンシブ対応*/
 @media screen and (max-width: 768px) {
     h1 {
