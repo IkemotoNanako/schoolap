@@ -92,7 +92,9 @@ methods: {
         this.subjects.pop(this.newSubject);
     },
   //タイマーを動かす記述
+  // count関数はsetIntervalにより毎秒呼ばれる
     count() {
+      //0秒以下 && 1分を切っていない → 分数を-1、秒を59にリセット
       if (this.sec <= 0 && this.min >= 1) {
         this.min --;
         this.sec = 59;
@@ -110,11 +112,12 @@ methods: {
         this.number++;//勉強時間と休憩時間の切り替えのための変数numberを＋１する
         this.min = this.rest;//記入された休憩時間を代入
         this.sec = 0;
-      } else if (this.min == 0 && this.sec == 1){
-        this.chime = false;
-        this.sec --;
+      } else if (this.min == 0 && this.sec == 1)//チャイム音のため
+      {
+        this.chime = false;//次のチャイム音に備えて一度falseにする
+        this.sec --;//秒数を-1
       } else {
-        this.sec --;
+        this.sec --;//秒数を-1
       }
     },
     start() {
@@ -128,20 +131,19 @@ methods: {
       this.timerOn = false; //timerをOFFにする
     },
   },
-  //分数・秒数が一桁台であれば 01という風に表示する
   computed: {
     formatTime() {
       let timeStrings = [
-        this.min.toString(),
-        this.sec.toString()
-      ].map(function(str) {
+        this.min.toString(),//文字に変換
+        this.sec.toString()//文字に変換
+      ].map(function(str) {//分数・秒数が一桁台であれば 01という風に表示する
         if (str.length < 2) {
           return "0" + str
         } else {
           return str
         }
       })
-      return timeStrings[0] + ":" + timeStrings[1]
+      return timeStrings[0] + ":" + timeStrings[1]//見やすい形に
     }
   },
   //レスポンシブ対応のための記述
