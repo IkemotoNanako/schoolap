@@ -4,28 +4,28 @@
     <div class="bg bg2"></div>
     <div class="bg bg3"></div>
     <header>
-        <h1>うちで学校！！</h1>
+        <h1>ちゃいみー うちでがっこう！！</h1>
     </header>
-    <h2>時間割</h2>
+    <h2>じかんわり</h2>
     <ol class="subject">
         <li v-for="(subject) in subjects" :key="subject">{{subject}}</li>
     </ol>
     <input type="text" v-model="newSubject">
-    <input type="submit" value="決定" @click="addSubject">
-    <input type="submit" value="削除" @click="delateSubject">
-    <div>
-      <p>勉強時間</p>
-      <p><input type="number" placeholder="勉強時間" v-model="study">分</p>
-      <p>休憩時間</p>
-      <p><input type="number" placeholder="休憩時間" v-model="rest">分</p>
+    <input type="submit" value="けってい" @click="addSubject">
+    <input type="submit" value="けす" @click="delateSubject">
+    <div class="center">
+      <p>べんきょうじかん</p>
+      <p><input type="number" placeholder="べんきょうじかん" v-model="study">ふん</p>
+      <p>きゅうけいじかん</p>
+      <p><input type="number" placeholder="きゅうけいじかん" v-model="rest">ふん</p>
     </div>
     <div id="timer">
-      <div class="timer left">
+      <div class="timer right">
         <div class="time">
-            {{ formatTime }}
+            {{ time }}
         </div>
-        <button v-on:click="start" v-if="!timerOn">Start</button>
-        <button v-on:click="stop" v-if="timerOn">Stop</button>
+        <button v-on:click="start" v-if="!timerOn">スタート</button>
+        <button v-on:click="stop" v-if="timerOn">ストップ</button>
       </div>
     </div>
     <audio src="../assets/Japanese_School_Bell02-01.mp3" autoplay controls v-if="chime"></audio>
@@ -35,28 +35,28 @@
     <div class="bg bg2"></div>
     <div class="bg bg3"></div>
     <header>
-        <h1>うちで学校！！</h1>
+        <h1>ちゃいみー うちでがっこう！！</h1>
     </header>
-    <h2>時間割</h2>
+    <h2>じかんわり</h2>
     <ol class="subject">
         <li v-for="(subject) in subjects" :key="subject">{{subject}}</li>
     </ol>
     <input type="text" v-model="newSubject">
-    <input type="submit" value="決定" @click="addSubject">
-    <input type="submit" value="削除" @click="delateSubject">
+    <input type="submit" value="けってい" @click="addSubject">
+    <input type="submit" value="けす" @click="delateSubject">
     <div>
-      <p>勉強時間</p>
-      <p><input type="number" placeholder="勉強時間" v-model="study">分</p>
-      <p>休憩時間</p>
-      <p><input type="number" placeholder="休憩時間" v-model="rest">分</p>
+      <p>べんきょうじかん</p>
+      <p><input type="number" placeholder="べんきょうじかん" v-model="study">ふん</p>
+      <p>きゅうけいじかん</p>
+      <p><input type="number" placeholder="きゅうけいじかん" v-model="rest">ふん</p>
     </div>
     <div id="timer">
       <div class="timer">
         <div class="time">
-            {{ formatTime }}
+            {{ time }}
         </div>
-        <button v-on:click="start" v-if="!timerOn">Start</button>
-        <button v-on:click="stop" v-if="timerOn">Stop</button>
+        <button v-on:click="start" v-if="!timerOn">スタート</button>
+        <button v-on:click="stop" v-if="timerOn">ストップ</button>
       </div>
     </div>
     <audio src="../assets/Japanese_School_Bell02-01.mp3" autoplay controls v-if="chime"></audio>
@@ -68,17 +68,17 @@
 export default {
   data(){
     return{
-        newSubject:'',
+        newSubject:'',//入力された時間割
         study: '',//記入された勉強時間
         rest: '',//記入された休憩時間
         min: 0,//初期の分
         sec: 0,//初期の秒
         timerOn: false,//タイマーのON/OFFのため
-        timerObj: null,//setTimeoutを格納して、timerを止める時使う
+        timerStrage: null,//setTimeoutを格納して、timerを止める時使う
         chime: false,//trueの時チャイム音を鳴らすものをfalseにしておく
         number:0,//勉強時間と休憩時間の切り替えのための変数
         hoge: '',//レスポンシブ対応のための変数
-        subjects:[]
+        subjects:[]//時間割をいれる配列
     }
 },
 methods: {
@@ -122,17 +122,17 @@ methods: {
     },
     start() {
       let self = this;
-      this.timerObj = setInterval(function() {self.count()}, 1000)
-      this.timerOn = true; //timerをONにする
+      this.timerStrage = setInterval(function() {self.count()}, 1000)//一秒ごとにcountを呼び出している
+      this.timerOn = true; //stopボタンを表示
     },
 
     stop() {
-      clearInterval(this.timerObj);
-      this.timerOn = false; //timerをOFFにする
+      clearInterval(this.timerStrage);//タイマーを止める
+      this.timerOn = false; //startボタンを表示
     },
   },
   computed: {
-    formatTime() {
+    time() {
       let timeStrings = [
         this.min.toString(),//文字に変換
         this.sec.toString()//文字に変換
@@ -161,7 +161,7 @@ methods: {
 
 .bg {
   animation:slide 3s ease-in-out infinite alternate;
-  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
+  background-image: linear-gradient(-60deg, rgb(235, 252, 5) 50%, #09f 50%);
   bottom:0;
   left:-50%;
   opacity:.5;
@@ -192,42 +192,47 @@ methods: {
 }
 /*header*/
 header {
-    margin: 0px;
-    box-sizing: border-box;
-    display: flex;
+  margin: 0px;
+  box-sizing: border-box;
+  display: flex;
 }
 h1 {
-    color: #fff;
-    font-size: 50px;
-    font-weight: bold;
-    padding: 20px;
-    text-shadow: 2px 2px 3px #333;
-    align-items: center;
-    justify-content: center;
+  color: #fff;
+  font-size: 50px;
+  font-weight: bold;
+  padding: 0 20px;
+  text-shadow: 2px 2px 3px #333;
+  align-items: center;
+  justify-content: center;
 }
 /*時間割*/
 h2 {
-    color: #fff;
-    font-size: 50px;
-    padding: 20px;
-    text-shadow: 2px 2px 3px #333; 
+  color: #fff;
+  font-size: 50px;
+  padding:0 20px;
+  text-shadow: 2px 2px 3px #333; 
 }
 .subject {
-    color: #fff;
-    text-shadow: 2px 2px 3px #333;
+  color: #fff;
+  text-shadow: 2px 2px 3px #333;
+  font-size: 30px;
+}
+.center {
+  position:absolute;
+  left:35%;
+  top:46%; 
 }
 /*タイマー*/
 #timer {
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .time {
   font-size: 80px;
 }
-.left {
+.right {
   position: absolute;
-  top: 70%;
+  top: 60%;
+  left: 70%;
 }
 p {
   font-size: 30px;
@@ -235,15 +240,18 @@ p {
 /*レスポンシブ対応*/
 @media screen and (max-width: 768px) {
     h1 {
-        font-size: 20px;
-        padding: 20px 0;
-        margin: 0px;
+      font-size: 20px;
+      padding: 20px 0;
+      margin: 0px;
     }
     h2 {
-        font-size: 17px;
+      font-size: 17px;
     }
     p  {
-        font-size: 15px;
+      font-size: 15px;
+    }
+    .subject {
+      font-size: 15px;
     }
 }
 

@@ -1,15 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Schedule from '../views/Schedule.vue'
-
+import Schedule1 from '../views/Schedule1.vue'
+import Schedule2 from '../views/Schedule2.vue'
 
 Vue.use(VueRouter)
 
   const routes = [
   {
     path: '/',
-    name: 'Schedule',
-    component: Schedule
+    name: 'Schedule1',
+    component: Schedule1
+  },
+  {
+    path: '/schedule2',
+    name: 'Schedule2',
+    component: Schedule2
   }
 ]
 
